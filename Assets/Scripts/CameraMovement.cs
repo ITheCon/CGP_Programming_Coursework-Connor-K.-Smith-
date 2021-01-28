@@ -9,7 +9,7 @@ public class CameraMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        cameraSpacing = transform.position;
+        cameraSpacing = transform.position - player.transform.position;
     }
 
     // Update is called once per frame
