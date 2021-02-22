@@ -36,6 +36,5 @@ public class Movement : MonoBehaviour
             transform.Translate(Vector3.left * Time.deltaTime * HorizontalSpeed);
         }
 
-        Debug.Log(transform.position);
     }
 }

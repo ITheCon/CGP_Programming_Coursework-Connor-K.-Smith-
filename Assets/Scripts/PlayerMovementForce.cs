@@ -23,19 +23,18 @@ public class PlayerMovementForce : MonoBehaviour
         if (up)
         {
             // Move the object forward along its z axis with force
-            rb.AddForce(transform.forward * speed);
+            rb.AddForce(transform.forward * (speed + speed*0.5f*rb.mass));
         }
         if (right)
         {
             // Move the object to the right along its x axis 2 unit/second.
-            rb.AddForce(transform.right * speed);
+            rb.AddForce(transform.right * (speed + speed * 0.7f * rb.mass));
         }
         else if (left)
         {
             // Move the object to the left along its x axis 2 unit/second.
-            rb.AddForce(-transform.right * speed);
+            rb.AddForce(-transform.right * (speed + speed * 0.7f * rb.mass));
         }
 
-        Debug.Log(transform.position);
     }
 }
