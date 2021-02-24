@@ -14,8 +14,8 @@ public class PenguinNavigation : MonoBehaviour
 
     int updatePath;
 
-    public int updateTime = 5;
-    public float movementSpeed = 2;
+    int updateTime = 5;
+    float movementSpeed = 1;
 
     bool running = false;
     bool turn = false;
@@ -55,7 +55,7 @@ public class PenguinNavigation : MonoBehaviour
                     agent.destination = start;
                     updatePath = updateTime;
 
-                    distanceToGoal = Mathf.Abs(transform.position.x - start.x);
+                    distanceToGoal = Mathf.Abs(transform.position.x - start.x) + Mathf.Abs(transform.position.y - start.y);
                 }
                 else
                 {
@@ -63,9 +63,9 @@ public class PenguinNavigation : MonoBehaviour
                     agent.destination = goal.position;
                     updatePath = updateTime;
 
-                    distanceToGoal = Mathf.Abs(transform.position.x - goal.position.x);
+                    distanceToGoal = Mathf.Abs(transform.position.x - goal.position.x) + Mathf.Abs(transform.position.y - goal.position.y);
                 }
-                if (distanceToGoal < 5.0f)
+                if (distanceToGoal < 10.0f)
                 {
                     turn = !turn;
                 }

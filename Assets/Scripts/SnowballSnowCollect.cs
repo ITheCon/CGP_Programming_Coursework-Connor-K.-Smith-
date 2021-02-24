@@ -10,7 +10,10 @@ public class SnowballSnowCollect : MonoBehaviour
     float massToAdd = 0;
     float sizeToAdd = 0;
     Vector3 size;
-    int delay = 120;
+    bool touchingGround = false;
+
+    public float growWithSpeedMagnitude = 10;
+
     GameObject collidingObject;
     // Start is called before the first frame update
     void Start()
@@ -22,26 +25,33 @@ public class SnowballSnowCollect : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (delay <= 0)
+        if (touchingGround)
         {
             speed = transform.parent.GetComponent<Rigidbody>().velocity.magnitude;
-            AddMass(mass * speed * 0.00015f);
-            AddSize(speed * 0.0003f);
-
-            if (massToAdd >= 0.025f)
-            {
-                AddMass(0.025f);
-                massToAdd -= 0.025f;
-            }
-            if (sizeToAdd >= 0.05f)
-            {
-                AddSize(0.05f);
-                sizeToAdd -= 0.05f;
-            }
+            AddMass(mass * speed * 0.00001f * growWithSpeedMagnitude);
+            AddSize(speed * 0.00002f * growWithSpeedMagnitude);
         }
-        else
+
+        if (massToAdd >= 0.025f)
         {
-            delay = delay - 1;
+            AddMass(0.025f);
+            massToAdd -= 0.025f;
+        }
+        else if (massToAdd <= -0.025f)
+        {
+            AddMass(-0.025f);
+            massToAdd += 0.025f;
+        }
+
+        if (sizeToAdd >= 0.05f)
+        {
+            AddSize(0.05f);
+            sizeToAdd -= 0.05f;
+        }
+        else if (sizeToAdd <= -0.05f)
+        {
+            AddSize(-0.05f);
+            sizeToAdd += 0.05f;
         }
     }
 
@@ -51,7 +61,7 @@ public class SnowballSnowCollect : MonoBehaviour
         // Snowman Collision
         if (collidingObject.layer == 8)
         {
-            if (GetComponentInParent<Rigidbody>().mass > 2)
+            if (GetComponentInParent<Rigidbody>().mass >= 3.5f)
             {
                 if (collidingObject.GetComponentInParent<Rigidbody>() != null)
                 {
@@ -73,7 +83,7 @@ public class SnowballSnowCollect : MonoBehaviour
         // Penguin Collision
         if (collidingObject.layer == 9)
         {
-            if (GetComponentInParent<Rigidbody>().mass > 1.5)
+            if (GetComponentInParent<Rigidbody>().mass > 2.5f)
             {
                 if (collidingObject.GetComponentInParent<Rigidbody>() != null)
                 {
@@ -97,30 +107,44 @@ public class SnowballSnowCollect : MonoBehaviour
             }
         }
     }
-    /*private void OnCollisionEnter(Collision collision)
+    private void OnTriggerStay(Collider other)
     {
-        collidingObject = collision.gameObject;
-        Debug.Log("collision Detected with collider");
-
-        if (collidingObject.GetComponentInParent<Rigidbody>() == null)
+        collidingObject = other.gameObject;
+        // Check if touching ground
+        if (collidingObject.layer == 0)
+            touchingGround = true;
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        collidingObject = other.gameObject;
+        // Check if touching ground
+        if (collidingObject.layer == 0)
+            touchingGround = false;
+    }
+        /*private void OnCollisionEnter(Collision collision)
         {
-            //Colliding with a snowman
-            if (collidingObject.layer == 8)
+            collidingObject = collision.gameObject;
+            Debug.Log("collision Detected with collider");
+
+            if (collidingObject.GetComponentInParent<Rigidbody>() == null)
             {
-                Debug.Log("collision Detected");
-                Transform parent = collidingObject.transform.parent.parent.parent;
-                RemoveCollidersRecursively(parent);
-                parent.parent = transform.parent;
-                AddMass(0.5f);
-                AddSize(1f);
+                //Colliding with a snowman
+                if (collidingObject.layer == 8)
+                {
+                    Debug.Log("collision Detected");
+                    Transform parent = collidingObject.transform.parent.parent.parent;
+                    RemoveCollidersRecursively(parent);
+                    parent.parent = transform.parent;
+                    AddMass(0.5f);
+                    AddSize(1f);
 
+                }
             }
-        }
 
 
-    }*/
+        }*/
 
-    private void RemoveCollidersRecursively(Transform parent)
+        private void RemoveCollidersRecursively(Transform parent)
     {
         if (parent != null)
         {
