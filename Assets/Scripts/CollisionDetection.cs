@@ -30,6 +30,16 @@ public class CollisionDetection : MonoBehaviour
                 Destroy(collidingObject.GetComponentInParent<Rigidbody>());
             }
         }
+
+        if (collidingObject.layer == 9)
+        {
+            Debug.Log("colliding with penguin");
+            if (collidingObject.GetComponentInParent<Rigidbody>() != null)
+            {
+                Destroy(collidingObject.GetComponentInParent<NavMeshAgent>());
+                Destroy(collidingObject.GetComponentInParent<Rigidbody>());
+            }
+        }
     }
     private void OnCollisionEnter(Collision collision)
     {
@@ -41,9 +51,19 @@ public class CollisionDetection : MonoBehaviour
             if(collidingObject.layer == 8)
             {
                 Debug.Log("collision Detected");
-                Transform parent = collidingObject.transform.parent.parent.parent.parent;
+                Transform parent = collidingObject.transform;
                 RemoveCollidersRecursively(parent);
                 parent = gameObject.transform;
+                transform.localScale = transform.localScale;
+
+            }
+            //Colliding with a penguin
+            if (collidingObject.layer == 9)
+            {
+                Debug.Log("collision Detected");
+                Transform parent = collidingObject.transform;
+                RemoveCollidersRecursively(parent);
+                parent.parent = gameObject.transform;
                 transform.localScale = transform.localScale;
 
             }

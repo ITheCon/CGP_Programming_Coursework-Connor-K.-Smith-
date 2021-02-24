@@ -7,14 +7,16 @@ public class SnowballSnowCollect : MonoBehaviour
 {
     float speed;
     float mass;
+    float massToAdd = 0;
+    float sizeToAdd = 0;
     Vector3 size;
     int delay = 120;
     GameObject collidingObject;
     // Start is called before the first frame update
     void Start()
     {
-        mass = transform.parent.GetComponent<Rigidbody>().mass;
-        size = GetComponent<Transform>().localScale;
+        mass = 1;
+        size = new Vector3(1,1,1);
     }
 
     // Update is called once per frame
@@ -23,8 +25,19 @@ public class SnowballSnowCollect : MonoBehaviour
         if (delay <= 0)
         {
             speed = transform.parent.GetComponent<Rigidbody>().velocity.magnitude;
-            AddMass(mass * speed * 0.00005f);
-            AddSize(speed * 0.0001f);
+            AddMass(mass * speed * 0.00015f);
+            AddSize(speed * 0.0003f);
+
+            if (massToAdd >= 0.025f)
+            {
+                AddMass(0.025f);
+                massToAdd -= 0.025f;
+            }
+            if (sizeToAdd >= 0.05f)
+            {
+                AddSize(0.05f);
+                sizeToAdd -= 0.05f;
+            }
         }
         else
         {
@@ -35,21 +48,52 @@ public class SnowballSnowCollect : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         collidingObject = other.gameObject;
-
+        // Snowman Collision
         if (collidingObject.layer == 8)
         {
-            if (collidingObject.GetComponentInParent<Rigidbody>() != null)
+            if (GetComponentInParent<Rigidbody>().mass > 2)
             {
-                Destroy(collidingObject.GetComponentInParent<NavMeshAgent>());
-                Destroy(collidingObject.GetComponentInParent<Rigidbody>());
-            } 
-            else
+                if (collidingObject.GetComponentInParent<Rigidbody>() != null)
+                {
+                    Destroy(collidingObject.GetComponentInParent<NavMeshAgent>());
+                    Destroy(collidingObject.GetComponentInParent<Rigidbody>());
+                }
+                else
+                {
+                    Transform parent = collidingObject.transform.parent.parent;
+                    SetLayerOfChildren(parent.gameObject);
+                    RemoveCollidersRecursively(parent);
+                    parent.parent = transform.parent;
+                    massToAdd += 0.5f;
+                    sizeToAdd += 1f;
+                }
+            }
+        }
+
+        // Penguin Collision
+        if (collidingObject.layer == 9)
+        {
+            if (GetComponentInParent<Rigidbody>().mass > 1.5)
             {
-                Transform parent = collidingObject.transform.parent.parent.parent;
-                RemoveCollidersRecursively(parent);
-                parent.parent = transform.parent;
-                AddMass(0.5f);
-                AddSize(1f);
+                if (collidingObject.GetComponentInParent<Rigidbody>() != null)
+                {
+                    //if (collidingObject.GetComponentInParent<NavMeshAgent>() != null)
+                    Destroy(collidingObject.GetComponentInParent<NavMeshAgent>());
+                    Destroy(collidingObject.GetComponentInParent<Rigidbody>());
+                    Destroy(collidingObject.GetComponentInParent<Animation>());
+                    Destroy(collidingObject.GetComponentInParent<PenguinNavigation>());
+
+                }
+                else
+                {
+                    Transform parent = collidingObject.transform.parent.parent;
+                    SetLayerOfChildren(parent.gameObject);
+                    RemoveCollidersRecursively(parent);
+                    if (parent != null)
+                        parent.parent = transform.parent;
+                    massToAdd += 0.2f;
+                    sizeToAdd += 0.4f;
+                }
             }
         }
     }
@@ -78,9 +122,12 @@ public class SnowballSnowCollect : MonoBehaviour
 
     private void RemoveCollidersRecursively(Transform parent)
     {
-        var allColliders = parent.gameObject.GetComponentsInChildren<Collider>();
+        if (parent != null)
+        {
+            var allColliders = parent.gameObject.GetComponentsInChildren<Collider>();
 
-        foreach (var childCollider in allColliders) Destroy(childCollider);
+            foreach (var childCollider in allColliders) Destroy(childCollider);
+        }
     }
 
     //Increases the size of the snowball based on its original size
@@ -93,5 +140,13 @@ public class SnowballSnowCollect : MonoBehaviour
     private void AddMass(float addedMass)
     {
         transform.parent.GetComponent<Rigidbody>().mass = transform.parent.GetComponent<Rigidbody>().mass + addedMass;
+    }
+
+    public static void SetLayerOfChildren(GameObject go)
+    {
+        foreach (Transform trans in go.GetComponentsInChildren<Transform>(true))
+        {
+            trans.gameObject.layer = 10;
+        }
     }
 }
