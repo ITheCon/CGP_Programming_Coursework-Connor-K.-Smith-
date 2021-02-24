@@ -106,6 +106,13 @@ public class SnowballSnowCollect : MonoBehaviour
                 }
             }
         }
+
+        // Rock Collision
+        if (collidingObject.layer == 11)
+        {
+            massToAdd -= 0.1f;
+            sizeToAdd -= 0.2f;
+        }
     }
     private void OnTriggerStay(Collider other)
     {
