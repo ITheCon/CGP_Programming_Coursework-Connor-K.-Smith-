@@ -16,7 +16,7 @@ public class CameraMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        // Will follow the player object, but keep moving further away as the player increases in size and mass
         transform.position = player.transform.position + cameraSpacing*(player.GetComponentInParent<Rigidbody>().mass*0.5f);
     }
 }

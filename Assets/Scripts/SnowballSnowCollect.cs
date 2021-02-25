@@ -25,13 +25,14 @@ public class SnowballSnowCollect : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Slowly add mass and size to the player snowball as they are moving on the ground
         if (touchingGround)
         {
             speed = transform.parent.GetComponent<Rigidbody>().velocity.magnitude;
             AddMass(mass * speed * 0.00001f * growWithSpeedMagnitude);
             AddSize(speed * 0.00002f * growWithSpeedMagnitude);
         }
-
+        // A pool variable to add mass or size if there is a remaining amount left. Other objects touched either increase or decreases this pool. 
         if (massToAdd >= 0.025f)
         {
             AddMass(0.025f);
@@ -70,6 +71,7 @@ public class SnowballSnowCollect : MonoBehaviour
                 }
                 else
                 {
+                    // set the parent of the object to the snowball instead and make it apart of the player
                     Transform parent = collidingObject.transform.parent.parent;
                     SetLayerOfChildren(parent.gameObject);
                     RemoveCollidersRecursively(parent);
@@ -96,6 +98,7 @@ public class SnowballSnowCollect : MonoBehaviour
                 }
                 else
                 {
+                    // set the parent of the object to the snowball instead and make it apart of the player
                     Transform parent = collidingObject.transform.parent.parent;
                     SetLayerOfChildren(parent.gameObject);
                     RemoveCollidersRecursively(parent);
@@ -151,7 +154,8 @@ public class SnowballSnowCollect : MonoBehaviour
 
         }*/
 
-        private void RemoveCollidersRecursively(Transform parent)
+    // Removes all colliders of an object
+    private void RemoveCollidersRecursively(Transform parent)
     {
         if (parent != null)
         {
@@ -173,6 +177,8 @@ public class SnowballSnowCollect : MonoBehaviour
         transform.parent.GetComponent<Rigidbody>().mass = transform.parent.GetComponent<Rigidbody>().mass + addedMass;
     }
 
+
+    // Chnage the layer of all children to the player's layer
     public static void SetLayerOfChildren(GameObject go)
     {
         foreach (Transform trans in go.GetComponentsInChildren<Transform>(true))

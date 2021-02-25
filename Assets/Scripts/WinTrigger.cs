@@ -19,6 +19,7 @@ public class WinTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // If player gets into trigger field, win.
         if (other.gameObject.layer == 10)
         {
             text.text = "YOU WIN!";

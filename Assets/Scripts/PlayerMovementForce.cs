@@ -31,22 +31,22 @@ public class PlayerMovementForce : MonoBehaviour
         }
         if (right)
         {
-            // Move the object to the right along its x axis 2 unit/second.
+            // Move the object to the right along its x axis with force.
             rb.AddForce(transform.right * (speed + speed * 0.7f * rb.mass));
         }
         else if (left)
         {
-            // Move the object to the left along its x axis 2 unit/second.
+            // Move the object to the left along its -x axis with force.
             rb.AddForce(-transform.right * (speed + speed * 0.7f * rb.mass));
         }
         else if (down)
         {
-            // Move the object forward along its z axis with force
+            // Move the object forward along its -z axis with force
             rb.AddForce(-transform.forward * (speed + speed * 0.5f * rb.mass));
         }
         else if (jump && jumpCooldown <= 0)
         {
-            // Move the object forward along its z axis with force
+            // Move the object forward along its y axis with force
             rb.AddForce(transform.up * ((speed*50f) + (speed*50f*rb.mass)));
             jumpCooldown = 60;
         }

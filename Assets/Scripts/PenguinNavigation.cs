@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class PenguinNavigation : MonoBehaviour
 {
-
+    
     public Transform goal;
     Vector3 start;
     Vector3 fleeLocation;
@@ -37,9 +37,11 @@ public class PenguinNavigation : MonoBehaviour
 
     private void Update()
     {
+        // Only update the path planning of the penguin every couple of frames to slow down the penguins movement
         agent = GetComponent<NavMeshAgent>();
         if (updatePath <= 0)
         {
+            // For when the penguin is fleeing from the player snowball instead of normal path planning
             if (running)
             {
                 anim.Play("run");
@@ -55,7 +57,7 @@ public class PenguinNavigation : MonoBehaviour
                     agent.destination = start;
                     updatePath = updateTime;
 
-                    distanceToGoal = Mathf.Abs(transform.position.x - start.x) + Mathf.Abs(transform.position.y - start.y);
+                    distanceToGoal = Mathf.Abs(transform.position.x - start.x) + Mathf.Abs(transform.position.z - start.z);
                 }
                 else
                 {
@@ -63,8 +65,9 @@ public class PenguinNavigation : MonoBehaviour
                     agent.destination = goal.position;
                     updatePath = updateTime;
 
-                    distanceToGoal = Mathf.Abs(transform.position.x - goal.position.x) + Mathf.Abs(transform.position.y - goal.position.y);
+                    distanceToGoal = Mathf.Abs(transform.position.x - goal.position.x) + Mathf.Abs(transform.position.z - goal.position.z);
                 }
+                // Checks the distance to the goal and turns the penguin to walk back towards its start position once it gets close enough
                 if (distanceToGoal < 10.0f)
                 {
                     turn = !turn;
@@ -80,7 +83,8 @@ public class PenguinNavigation : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.layer == 10)
+        // Check within trigger radius for the player snowball or falling rock, then run away
+        if (other.gameObject.layer == 10 || other.gameObject.layer == 11)
         {
             if (updatePath <= 0)
             {
@@ -92,7 +96,8 @@ public class PenguinNavigation : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == 10)
+        // If snowball or rock is gone, resume normal path planning
+        if (other.gameObject.layer == 10 || other.gameObject.layer == 11)
         {
             running = false;
         }

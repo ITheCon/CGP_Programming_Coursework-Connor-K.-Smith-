@@ -17,6 +17,7 @@ public class UIMassText : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Shows the current mass of the player as a text element UI
         playerObjectMass = transform.GetComponentInParent<Rigidbody>().mass;
         text.text = "Mass = " + playerObjectMass;
     }
